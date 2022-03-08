@@ -22,3 +22,6 @@ void flag_checker(int argc, char * argv[], int * flag_arr) {
 		}
 	}
 }
+
+void line_parse() {
+}

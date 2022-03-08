@@ -33,5 +33,16 @@ int main (int argc, char * argv[]) {
 		printf("flag[%d] = %d\n", i, flags[i]);
 	}
 
+	char * line;
+	const char s[2] = " ";
+	char * token;
+	size_t length = 0;
+	ssize_t nread = 0;
+	line = (char *)malloc(256);
+
+	while(nread = getline(&line, &length, stdin)!= -1) {
+		printf("line = %s\n", line);
+	}
+
 
 }
