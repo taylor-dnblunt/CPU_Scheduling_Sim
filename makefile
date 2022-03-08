@@ -1,14 +1,17 @@
 CC = gcc
 CFLAGS = -std=gnu99 -pthread -Wpedantic
 
-all: sched
+all: simcpu
 
-sched.o: sched.c
-	$(CC) $(CFLAGS) -c sched.c -o sched.o
+simcpu.o: simcpu.c
+	$(CC) $(CFLAGS) -c simcpu.c -o simcpu.o
 
-sched: sched.o
-	$(CC) $(CFLAGS) sched.o -o sched
+simcpu: simcpu.o simcpu_func.o
+	$(CC) $(CFLAGS) simcpu.o simcpu_func.o -o simcpu
+
+simcpu_func.o: simcpu_func.c
+	$(CC) $(CFLAGS) -c simcpu_func.c -o simcpu_func.o
 
 clean:
-	rm *.o sched
+	rm *.o simcpu
 
