@@ -1,2 +1,3 @@
-sched
+simcpu
 *.o
+*.txt
