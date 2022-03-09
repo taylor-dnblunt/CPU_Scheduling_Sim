@@ -40,9 +40,21 @@ int main (int argc, char * argv[]) {
 	ssize_t nread = 0;
 	line = (char *)malloc(256);
 
-	while(nread = getline(&line, &length, stdin)!= -1) {
-		printf("line = %s\n", line);
-	}
+	sim_cont sim;
+	sim.process = 2;
+	sim.same_switch = 3;
+	sim.dif_switch = 7;
 
+	printf("p = %d, ss = %d, ds = %d\n", sim.process, sim.same_switch, sim.dif_switch);
+	int lineCnt = 0;
+	//First line is #processes / switch threads in same process / switch threads in different processes
+	while(nread = getline(&line, &length, stdin)!= -1) {
+		lineCnt++;
+		//printf("line = %s", line);
+		if (lineCnt == 1) {
+			printf("1st line = %s", line);
+		}
+	}
+	printf("Line count = %d\n", lineCnt);
 
 }
