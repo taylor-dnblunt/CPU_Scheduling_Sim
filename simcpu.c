@@ -27,6 +27,7 @@ int main (int argc, char * argv[]) {
 	include summary info about each thread after termination
 	*/
 	int flags[3] = {0, 0, 0};
+	int nums[3] = {0, 0, 0}; //FIXME: potential problem here because its usually 2 or 3 numbers
 
 	flag_checker(argc, argv, flags);
 	for (int i = 0; i < 3; i++) {
@@ -34,27 +35,32 @@ int main (int argc, char * argv[]) {
 	}
 
 	char * line;
-	const char s[2] = " ";
-	char * token;
 	size_t length = 0;
 	ssize_t nread = 0;
 	line = (char *)malloc(256);
 
 	sim_cont sim;
-	sim.process = 2;
-	sim.same_switch = 3;
-	sim.dif_switch = 7;
 
-	printf("p = %d, ss = %d, ds = %d\n", sim.process, sim.same_switch, sim.dif_switch);
 	int lineCnt = 0;
 	//First line is #processes / switch threads in same process / switch threads in different processes
 	while(nread = getline(&line, &length, stdin)!= -1) {
+
 		lineCnt++;
-		//printf("line = %s", line);
-		if (lineCnt == 1) {
-			printf("1st line = %s", line);
+		line_parse(line, nums);
+
+		if (lineCnt == 1) {//Initial info
+			sim.process = nums[0];
+			sim.same_switch = nums[1];
+			sim.dif_switch = nums[2];
+
+		}
+		if (lineCnt == 2) {//First process
+			proc p;
+			p.tnum = nums[1];
+			printf("num threads in first process = %d\n", p.tnum);
 		}
 	}
 	printf("Line count = %d\n", lineCnt);
+	printf("p = %d, ss = %d, ds = %d\n", sim.process, sim.same_switch, sim.dif_switch);
 
 }
