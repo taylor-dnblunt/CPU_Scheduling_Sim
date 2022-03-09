@@ -1,9 +1,12 @@
+typedef struct threads {
+	int arrive;
+	int cpu_bursts;
+} t_type;
 
-typedef struct node {
-	struct node * left;
-	struct node * right;
-	int value;
-} node;
+typedef struct process {
+	int tnum;
+	t_type * head;
+} proc;
 
 typedef struct sim_cont {
 	int process;
@@ -12,3 +15,4 @@ typedef struct sim_cont {
 } sim_cont;
 
 void flag_checker(int argc, char * argv[], int * flag_arr);
+void line_parse(char * line, int * num_arr);
