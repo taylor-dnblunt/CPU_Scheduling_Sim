@@ -23,5 +23,15 @@ void flag_checker(int argc, char * argv[], int * flag_arr) {
 	}
 }
 
-void line_parse() {
+//Take line and return numbers from line in the num_arr
+void line_parse(char * line, int * num_arr) {
+
+	const char s[2] = " ";
+	int i = 0;
+	for (char * p = strtok(line, s); p != NULL; p = strtok(NULL, s)) {
+		//printf("%d ", atoi(p));
+		num_arr[i] = atoi(p);
+		i++;
+	}
+	printf("line_parse\n");
 }
