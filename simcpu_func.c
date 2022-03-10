@@ -33,5 +33,4 @@ void line_parse(char * line, int * num_arr) {
 		num_arr[i] = atoi(p);
 		i++;
 	}
-	printf("line_parse\n");
 }

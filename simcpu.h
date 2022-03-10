@@ -10,6 +10,7 @@ typedef struct process {
 
 typedef struct sim_cont {
 	int process;
+	proc * proc_list;
 	int same_switch;
 	int dif_switch;
 } sim_cont;

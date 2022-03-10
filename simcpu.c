@@ -28,6 +28,7 @@ int main (int argc, char * argv[]) {
 	*/
 	int flags[3] = {0, 0, 0};
 	int nums[3] = {0, 0, 0}; //FIXME: potential problem here because its usually 2 or 3 numbers
+	
 
 	flag_checker(argc, argv, flags);
 	for (int i = 0; i < 3; i++) {
@@ -59,6 +60,13 @@ int main (int argc, char * argv[]) {
 			p.tnum = nums[1];
 			printf("num threads in first process = %d\n", p.tnum);
 		}
+		if (lineCnt == 3) {//Thread and cpu burst
+			t_type * t;
+			t->arrive = nums[1];
+			t->cpu_bursts = nums[2];
+			printf("thread 1 arrives %d and has %d cpu bursts\n", t->arrive, t->cpu_bursts);
+		}
+		//Go through the lines of the cpu bursts then grab the next thread
 	}
 	printf("Line count = %d\n", lineCnt);
 	printf("p = %d, ss = %d, ds = %d\n", sim.process, sim.same_switch, sim.dif_switch);
