@@ -1,0 +1,10 @@
+2 3 7 //processes and switches
+1 2 //process number 1 and two threads
+1 0 2 //thread number 1 0 arrival time and 2 bursts
+1 15 400 //burst 1 cpu io
+2 240 //burst 2 cpu
+2 2 2 //thread 2 arr 2 and 2 bursts
+1 1 1 //burst 1
+2 10 //burst 2
+2 2 //process 2 2 threads
+1 10 2 //thread 1 10 arrival time 2 bursts
