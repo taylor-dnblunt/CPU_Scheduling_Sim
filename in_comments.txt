@@ -8,3 +8,7 @@
 2 10 //burst 2
 2 2 //process 2 2 threads
 1 10 2 //thread 1 10 arrival time 2 bursts
+1 15 400 //burst 1
+2 400 //burst 2
+2 15 1 //thread 2
+1 400 //burst 1
