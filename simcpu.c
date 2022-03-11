@@ -41,24 +41,17 @@ int main (int argc, char * argv[]) {
 	ssize_t nread = 0;
 	line = (char *)malloc(256);
 	char * backupLine = (char *)malloc(256);
-	int threadFlag = 0;//True if currently counting cpu bursts
-	int processFlag = 0;//True if last thread in process completes its final cpu burst
+	int burstFlag = 0;//True if currently counting cpu bursts
+	int threadFlag = 0;//True if last thread in process completes its final cpu burst
 	int lineCnt = 0;
 	int burstCnt = 0;
 	int numBursts = 0;
 	int threadCnt = 0;//use to count the current thread number in the input file
 	int numThreads = 0;
-	//Get number of threads in a process
-	//Get number of cpu bursts in thread
-	//Go the number of lines that there are cpu bursts
-	//Next line is either the new thread or the new process
 	sim_cont * sim = (sim_cont *)malloc(sizeof(struct sim_cont));
 
-
-	//First line is #processes / switch threads in same process / switch threads in different processes
 	//This while loop goes through input and gathers all important data
 	while(nread = getline(&line, &length, stdin)!= -1) {
-		printf("%s", line);
 		lineCnt++;
 		strcpy(backupLine, line);
 		line_parse(line, nums);
@@ -77,34 +70,55 @@ int main (int argc, char * argv[]) {
 		}
 		if (lineCnt == 3) {//Thread and cpu burst
 			threadCnt++;
-			threadFlag = 1;
+			burstFlag = 1;
 			t_type * t = (t_type *)malloc(sizeof(t_type));
 			t->arrive = nums[1];
 			t->cpu_bursts = nums[2];
 			numBursts = nums[2];
 			printf("thread 1 arrives %d and has %d cpu bursts\n", t->arrive, t->cpu_bursts);
-		} else if (threadFlag == 1 && burstCnt == numBursts) {//Reset for new thread info
+
+
+		//First three lines are always the same so below checks for the remaining lines	
+		} else if (burstFlag == 1 && burstCnt == numBursts) {//Reset for new thread info
 			threadFlag = 0;
 			burstCnt = 0;
-			printf("threadCnt = %d and numThreads = %d\n", threadCnt, numThreads);
+			//printf("threadCnt = %d and numThreads = %d\n", threadCnt, numThreads);
 			if (threadCnt < numThreads) {
-				threadFlag = 1;
+				burstFlag = 1;
 				threadCnt++;
-				printf("threadCnt = %d", threadCnt);
+				numBursts = nums[2];
+				//printf("threadCnt = %d\n", threadCnt);
+				printf("This line is the next thread in a process: ");
+				printf("%sand has %d bursts\n", backupLine, numBursts);
 			} else if (threadCnt == numThreads) {
 				//Next line is a new process or the end
-				printf("This line is something: \n");
-				printf("%s\n", backupLine);
+				//Found new process or end so if not end and there are numbers take the 
+				//last number as the new threadNum
+				printf("This line is a process: ");
+				printf("%s", backupLine);
+				numThreads = nums[1];
+				threadFlag = 1;
+				burstFlag = 0;
+				printf("num threads in this process = %d\n", numThreads);
+				
 			}
 
-			printf("This line is a thread:\n");
-			printf("%s\n", backupLine);
-		} else if (threadFlag == 1) { //Go the certain number of cpu bursts then grab next thread
+
+		} else if (burstFlag == 1) { //Go the certain number of cpu bursts then grab next thread
 			burstCnt++;
+			printf("This line is a burst: %s", backupLine);
+		} else if (threadFlag == 1) { //Next line is new thread info
+			printf("This line is a new thread: ");
+			printf("%s\n", backupLine);
+			numBursts = nums[2];
+			printf("numBursts = %d and burstCnt = %d\n", numBursts, burstCnt);
+			burstFlag = 1;
+			threadCnt = 1;
 		}
 
 		//Go through the lines of the cpu bursts then grab the next thread
 	}
+	printf("\n");
 	printf("Line count = %d\n", lineCnt);
 	printf("p = %d, ss = %d, ds = %d\n", sim->process, sim->same_switch, sim->dif_switch);
 	free(sim);
