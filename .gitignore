@@ -1,2 +1,5 @@
 simcpu
 *.o
+*.save.1
+*.save
+.simcpu.c.swp
