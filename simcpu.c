@@ -48,7 +48,10 @@ int main (int argc, char * argv[]) {
 	int numBursts = 0;
 	int threadCnt = 0;//use to count the current thread number in the input file
 	int numThreads = 0;
+
+	//Add processes to list in sim
 	sim_cont * sim = (sim_cont *)malloc(sizeof(struct sim_cont));
+	
 
 	//This while loop goes through input and gathers all important data
 	while(nread = getline(&line, &length, stdin)!= -1) {
@@ -63,10 +66,13 @@ int main (int argc, char * argv[]) {
 
 		}
 		if (lineCnt == 2) {//First process
-			proc p;
-			p.tnum = nums[1];
+			proc * p = (proc *)malloc(sizeof(struct process));
+			p->tnum = nums[1];
 			numThreads = nums[1];
-			printf("num threads in first process = %d\n", p.tnum);
+			//FIXME:
+			//Make an array that contains enough space for the threads in process 1
+			t_type * t = malloc(p->tnum * sizeof(struct threads));
+			printf("num threads in first process = %d\n", p->tnum);
 		}
 		if (lineCnt == 3) {//Thread and cpu burst
 			threadCnt++;

@@ -5,7 +5,7 @@ typedef struct threads {
 
 typedef struct process {
 	int tnum;
-	t_type * head;
+	t_type * array;
 } proc;
 
 typedef struct sim_cont {
