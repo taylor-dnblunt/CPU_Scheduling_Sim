@@ -71,7 +71,12 @@ int main (int argc, char * argv[]) {
 			numThreads = nums[1];
 			//FIXME:
 			//Make an array that contains enough space for the threads in process 1
-			t_type * t = malloc(p->tnum * sizeof(struct threads));
+			t_type * t = malloc(p->tnum * sizeof(struct threads *));
+			p->array = t;
+			/*for (int i = 0; i < numThreads; i++) {
+				//FIXME: trying to assign space for each thread in the array of threads
+				((p->array)[i]) = (t_type *)malloc(sizeof((p->array)[i]));
+			}*/
 			printf("num threads in first process = %d\n", p->tnum);
 		}
 		if (lineCnt == 3) {//Thread and cpu burst
