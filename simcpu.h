@@ -5,11 +5,13 @@ typedef struct threads {
 
 typedef struct process {
 	int tnum;
+	int cur_tnum;
 	t_type * array;
 } proc;
 
 typedef struct sim_cont {
 	int process;
+	int cur_proc;
 	proc * proc_list;
 	int same_switch;
 	int dif_switch;
