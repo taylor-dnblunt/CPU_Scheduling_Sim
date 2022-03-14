@@ -1,6 +1,13 @@
+typedef struct burst {
+	int cpu;
+	int io;
+} burst;
+
 typedef struct threads {
 	int arrive;
 	int cpu_bursts;
+	int cur_b;
+	burst * b_list;
 } t_type;
 
 typedef struct process {
