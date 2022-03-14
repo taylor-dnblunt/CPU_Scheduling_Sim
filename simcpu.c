@@ -9,24 +9,6 @@
 
 int main (int argc, char * argv[]) {
 
-	/*
-	Run in FCFS if no flags are given
-	Output total time, avg turnaround time of the processes
-	and cpu utilization
-	*/
-	/*
-	if -d is given (detailed mode)
-	Output same as above plus arrival time, service time,
-	I/O time, turnaround time, and finish time for each thread
-	*/
-	/*
-	if -v is given (verbose mode)
-	same as above plus,
-	include every event that occurs, the time of the event and
-	the state transition
-	threads can be in new, ready, running, blocked, or terminated
-	include summary info about each thread after termination
-	*/
 	int flags[3] = {0, 0, 0};
 	int nums[3] = {0, 0, 0}; //FIXME: potential problem here because its usually 2 or 3 numbers
 
@@ -60,36 +42,38 @@ int main (int argc, char * argv[]) {
 		line_parse(line, nums);
 
 		if (lineCnt == 1) {//Initial info
-			//Makes an array containing the amount of processes
-			proc * p = malloc(nums[0] * sizeof *p);
-			//Points to the beginning of the array containing the processes
-			sim->proc_list = p;
+			proc * p = malloc(nums[0] * sizeof *p);//Makes an array containing the amount of processes
+			sim->proc_list = p;//Points to the beginning of the array containing the processes
 			sim->process = nums[0];
 			sim->same_switch = nums[1];
 			sim->dif_switch = nums[2];
 
 		}
-		if (lineCnt == 2) {//First process
+		if (lineCnt == 2) {//Initial process
 			sim->cur_proc++;
 			sim->proc_list[0].tnum = nums[1];
 			sim->proc_list[0].cur_tnum = 0;
 			numThreads = nums[1];
 
 			//Make an array that contains enough space for the threads in process 1
-			t_type t[sim->proc_list[0].tnum];
+			t_type * t = malloc(sim->proc_list[0].tnum * sizeof *t);
 			sim->proc_list[0].array = t;
 			
 			printf("num threads in first process = %d\n", sim->proc_list[0].tnum);
 		}
-		if (lineCnt == 3) {//Thread and cpu burst
+		if (lineCnt == 3) {//Initial thread
 			threadCnt++;
 			burstFlag = 1;
-			t_type * t = (t_type *)malloc(sizeof(t_type));
-			t->arrive = nums[1];
-			t->cpu_bursts = nums[2];
+			//t_type * t = (t_type *)malloc(sizeof(t_type));
+			sim->proc_list[0].array[0].arrive = nums[1];
+			sim->proc_list[0].array[0].cpu_bursts = nums[2];
+			burst * b = malloc(nums[2] * sizeof *b);
+			sim->proc_list[0].array[0].b_list = b;
+			sim->proc_list[0].array[0].cur_b++;
 			
 			numBursts = nums[2];
-			printf("thread 1 arrives %d and has %d cpu bursts\n", t->arrive, t->cpu_bursts);
+			printf("thread 1 arrives %d and has %d cpu bursts\n", sim->proc_list[0].array[0].arrive, 
+			sim->proc_list[0].array[0].cpu_bursts);
 
 
 		//First three lines are always the same so below checks for the remaining lines	
@@ -137,5 +121,6 @@ int main (int argc, char * argv[]) {
 	printf("p = %d, ss = %d, ds = %d\n", sim->process, sim->same_switch, sim->dif_switch);
 	printf("process 1 in the sim has %d threads and sim current process = %d\n",
 	 sim->proc_list[0].tnum, sim->cur_proc);
+	printf("first thread in process 1 has %d bursts\n", sim->proc_list[0].array[0].cpu_bursts);
 	free(sim);
 }
