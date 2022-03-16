@@ -28,3 +28,8 @@ typedef struct sim_cont {
 void flag_checker(int argc, char * argv[], int * flag_arr);
 void line_parse(char * line, int * num_arr);
 void free_mem(sim_cont * sim);
+void swap(int *a, int *b);
+void heapify(int array[], int size, int i);
+void insert(int array[], int newNum);
+void deleteRoot(int array[], int num);
+void printArray(int array[], int size);
