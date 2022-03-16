@@ -54,11 +54,11 @@ int main (int argc, char * argv[]) {
 			
 			sim->proc_list[0].tnum = nums[1];
 			sim->proc_list[0].cur_tnum = 0;
-			sim->cur_proc++;
+			//sim->cur_proc++;
 			numThreads = nums[1];
 
 			//Make an array that contains enough space for the threads in process 1
-			t_type * t = malloc(sim->proc_list[0].tnum * sizeof *t);
+			t_type * t = malloc(numThreads * sizeof *t);
 			sim->proc_list[0].t_list = t;
 			
 			printf("num threads in first process = %d\n", sim->proc_list[0].tnum);
@@ -72,7 +72,8 @@ int main (int argc, char * argv[]) {
 			//Allocate the amount of bursts
 			burst * b = malloc(nums[2] * sizeof *b);
 			sim->proc_list[0].t_list[0].b_list = b;
-			sim->proc_list[0].t_list[0].cur_b++;
+			//Changed from cur_b++ to cur_b = 0
+			sim->proc_list[0].t_list[0].cur_b = 0;
 			
 			numBursts = nums[2];
 			printf("thread 1 arrives %d and has %d cpu bursts\n", sim->proc_list[0].t_list[0].arrive, 
@@ -86,19 +87,24 @@ int main (int argc, char * argv[]) {
 			
 			if (threadCnt < numThreads) {
 				//NEW THREAD
+				//Theres something wrong with how im currently counting threads probably causing
+				//malloc out of bounds and seg fault
+				//Improper mallocing of space for threads?
+				
 				burstFlag = 1;
 				threadCnt++;
 				numBursts = nums[2];
-
+				sim->proc_list[sim->cur_proc].cur_tnum++;
 
 				//Malloc space for the amount of bursts in each thread
-				burst * b = malloc(nums[2] * sizeof *b);
+				burst * b = malloc(numBursts * sizeof *b);
+				//Am I not updating the current thread number?
 				int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
 
 				//IM WORKING HERE
-				/*sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
-				sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b++;
-				sim->proc_list[sim->cur_proc].cur_tnum++;*/
+				sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
+				sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
+				
 
 				//printf("threadCnt = %d\n", threadCnt);
 				printf("This line is the next thread in a process: ");
@@ -106,11 +112,13 @@ int main (int argc, char * argv[]) {
 
 			} else if (threadCnt == numThreads) {
 				//NEW PROCESS
-				sim->proc_list[sim->cur_proc].tnum = nums[1];
-				sim->proc_list[sim->cur_proc].cur_tnum = 0;
-				t_type * t = malloc(sim->proc_list[sim->cur_proc].tnum * sizeof *t);
-				sim->proc_list[sim->cur_proc].t_list = t;
 				sim->cur_proc++;
+				sim->proc_list[sim->cur_proc].tnum = nums[1];
+				int threads = nums[1];
+				sim->proc_list[sim->cur_proc].cur_tnum = 0;
+
+				t_type * t = malloc(threads * sizeof *t);
+				sim->proc_list[sim->cur_proc].t_list = t;
 
 				printf("This line is a process: ");
 				printf("%s", backupLine);
@@ -129,20 +137,41 @@ int main (int argc, char * argv[]) {
 			//Want burst of the current thread
 			//And want to add cpu time and IO time to that burst struct
 
-			/*t_type cur_thread = sim->proc_list[sim->cur_proc]
-			.t_list[sim->proc_list[sim->cur_proc].cur_tnum];
-			burst cur_burst = cur_thread.b_list[cur_thread.cur_b];*/
 
-			/*cur_burst.num = nums[0];
+			//New problem when trying to add new bursts to new processlist
+			printf("sim->cur proc = %d\n", sim->cur_proc);
+			t_type cur_thread = sim->proc_list[sim->cur_proc]
+			.t_list[sim->proc_list[sim->cur_proc].cur_tnum];
+			printf("cur thread = %d and cur burst = %d\n",
+			 sim->proc_list[sim->cur_proc].cur_tnum, cur_thread.cur_b);
+
+			burst cur_burst = cur_thread.b_list[cur_thread.cur_b];
+
+			//Doesnt get to this line
+			printf("This line is after finding the current thread and getting the current burst\n");
+			cur_burst.num = nums[0];
 			cur_burst.cpu = nums[1];
 			cur_burst.io = nums[2];
-			cur_thread.cur_b++;*/
+			cur_thread.cur_b++;
 			//printf("burst num %d cpu %d and io %d\n", cur_burst.num, cur_burst.cpu, cur_burst.io);
 		} else if (threadFlag == 1) { //Next line is new thread info
+			//Need to add a b_list here
 			printf("This line is a new thread: ");
 			printf("%s", backupLine);
 			numBursts = nums[2];
-			printf("numBursts = %d and burstCnt = %d\n", numBursts, burstCnt);
+
+			//Copy pasta'd here
+
+			//Malloc space for the amount of bursts in each thread
+			burst * b = malloc(numBursts * sizeof *b);
+			//Am I not updating the current thread number?
+			int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
+
+			//IM WORKING HERE
+			sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
+			sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
+			//End of copy pasta
+			//printf("numBursts = %d and burstCnt = %d\n", numBursts, burstCnt);
 			burstFlag = 1;
 			threadCnt = 1;
 		}
@@ -153,5 +182,6 @@ int main (int argc, char * argv[]) {
 	printf("process 1 in the sim has %d threads and sim current process = %d\n",
 	 sim->proc_list[0].tnum, sim->cur_proc);
 	printf("first thread in process 1 has %d bursts\n", sim->proc_list[0].t_list[0].cpu_bursts);
-	free(sim);
+
+	free_mem(sim);
 }
