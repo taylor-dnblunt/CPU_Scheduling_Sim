@@ -1,4 +1,5 @@
 typedef struct burst {
+	int num;
 	int cpu;
 	int io;
 } burst;
@@ -13,7 +14,7 @@ typedef struct threads {
 typedef struct process {
 	int tnum;
 	int cur_tnum;
-	t_type * array;
+	t_type * t_list;
 } proc;
 
 typedef struct sim_cont {
