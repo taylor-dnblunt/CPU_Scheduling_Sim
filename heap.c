@@ -7,7 +7,7 @@
  Array Implementation of MinHeap data Structure
 */
 
-HEAP_SIZE = 20;
+//HEAP_SIZE = 20;
 
 struct Heap{
     int *arr;
@@ -28,20 +28,20 @@ Heap *CreateHeap(int capacity,int heap_type){
     Heap *h = (Heap * ) malloc(sizeof(Heap)); //one is number of heap
 
     //check if memory allocation is fails
-    if(h == NULL){
+    /*if(h == NULL){
         printf("Memory Error!");
-        return;
-    }
+        return -1;
+    }*/
     h->heap_type = heap_type;
     h->count=0;
     h->capacity = capacity;
     h->arr = (int *) malloc(capacity*sizeof(int)); //size in bytes
 
     //check if allocation succeed
-    if ( h->arr == NULL){
+    /*if ( h->arr == NULL){
         printf("Memory Error!");
-        return;
-    }
+        return -1;
+    }*/
     return h;
 }
 
