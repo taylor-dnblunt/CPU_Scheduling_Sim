@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "simcpu.h"
 
 void flag_checker(int argc, char * argv[], int * flag_arr) {
 
@@ -33,4 +34,17 @@ void line_parse(char * line, int * num_arr) {
 		num_arr[i] = atoi(p);
 		i++;
 	}
+}
+
+void free_mem(sim_cont * sim){
+	//Need to free lists before freeing sim
+	for(int i = 0; i < sim->process; i++) {
+
+		for(int j = 0; j < sim->proc_list[i].tnum;j++) {
+			free(sim->proc_list[i].t_list[j].b_list); //Free burst lists in t_list
+			
+		}
+			free(sim->proc_list[i].t_list); //Free t_list
+	}
+	free(sim); //Free sim after burst list and t list are freed
 }
