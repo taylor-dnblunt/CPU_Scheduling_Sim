@@ -38,6 +38,12 @@ void flag_checker(int argc, char * argv[], int * flag_arr);
 void line_parse(char * line, int * num_arr);
 void free_mem(sim_cont * sim);
 void set_proc(sim_cont * sim, int * nums);
+void set_init_proc(sim_cont * sim, int * nums);
+void set_init_thread(sim_cont * sim, int * nums);
+void set_new_thread(sim_cont * sim, int * nums);
+void set_new_proc(sim_cont * sim, int * nums);
+void set_new_burst(sim_cont * sim, int * nums);
+void set_tAfterPLine(sim_cont * sim, int * nums);
 
 //Unused from heap.c
 /*void swap(int *a, int *b);

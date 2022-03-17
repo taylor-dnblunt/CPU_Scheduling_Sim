@@ -56,3 +56,67 @@ void set_proc(sim_cont * sim, int * nums) {
 	sim->same_switch = nums[1];
 	sim->dif_switch = nums[2];
 }
+
+void set_init_proc(sim_cont * sim, int * nums) {
+	int numThreads = nums[1];
+	sim->proc_list[0].tnum = numThreads;
+	sim->proc_list[0].cur_tnum = 0;
+
+	//Make an array that contains enough space for the threads in process 1
+	t_type * t = malloc(numThreads * sizeof *t);
+	sim->proc_list[0].t_list = t;
+	
+	printf("num threads in first process = %d\n", sim->proc_list[0].tnum);
+}
+
+void set_init_thread(sim_cont * sim, int * nums) {
+	//Set arrival and number of cpu bursts
+	int numBursts = nums[2];
+	sim->proc_list[0].t_list[0].arrive = nums[1];
+	sim->proc_list[0].t_list[0].cpu_bursts = numBursts;
+	//Allocate the amount of bursts
+	burst * b = malloc(numBursts * sizeof *b);
+	sim->proc_list[0].t_list[0].b_list = b;
+	sim->proc_list[0].t_list[0].cur_b = 0;
+}
+
+void set_new_thread(sim_cont * sim, int * nums) {
+	int numBursts = nums[2];
+	//Malloc space for the amount of bursts in each thread
+	burst * b = malloc(numBursts * sizeof *b);
+	sim->proc_list[sim->cur_proc].cur_tnum++;
+	int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
+}
+
+void set_new_proc(sim_cont * sim, int * nums) {
+	sim->cur_proc++;
+	sim->proc_list[sim->cur_proc].tnum = nums[1];
+	int threads = nums[1];
+	sim->proc_list[sim->cur_proc].cur_tnum = 0;
+	//Malloc space for thread array
+	t_type * t = malloc(threads * sizeof *t);
+	sim->proc_list[sim->cur_proc].t_list = t;
+}
+
+void set_new_burst(sim_cont * sim, int * nums) {
+	t_type cur_thread = sim->proc_list[sim->cur_proc]
+	.t_list[sim->proc_list[sim->cur_proc].cur_tnum];
+	burst cur_burst = cur_thread.b_list[cur_thread.cur_b];
+	cur_burst.num = nums[0];
+	cur_burst.cpu = nums[1];
+	cur_burst.io = nums[2];
+	cur_thread.cur_b++;
+}
+
+void set_tAfterPLine(sim_cont * sim, int * nums) {
+	int numBursts = nums[2];
+	//Malloc space for the amount of bursts in each thread
+	burst * b = malloc(numBursts * sizeof *b);
+	int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
+}

@@ -25,6 +25,7 @@
     return 0;
 }*/
 
+//heap_type = 0 for min heap and 1 for max heap
 Heap *CreateHeap(int capacity,int heap_type){
     Heap *h = (Heap * ) malloc(sizeof(Heap)); //one is number of heap
 

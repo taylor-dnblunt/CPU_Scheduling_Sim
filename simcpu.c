@@ -33,7 +33,6 @@ int main (int argc, char * argv[]) {
 
 	//Add processes to list in sim
 	sim_cont * sim = (sim_cont *)malloc(sizeof(struct sim_cont));
-	
 
 	//This while loop goes through input and gathers all important data
 	while(nread = getline(&line, &length, stdin)!= -1) {
@@ -42,44 +41,20 @@ int main (int argc, char * argv[]) {
 		line_parse(line, nums);
 
 		if (lineCnt == 1) {//Initial info
-			//Makes an array containing the amount of processes
+			//Makes an array containing the amount of processes and switch times
 			set_proc(sim, nums);
-			/*proc * p = malloc(nums[0] * sizeof *p);
-			sim->proc_list = p;//Points to the beginning of the array containing the processes
-			sim->process = nums[0];
-			sim->same_switch = nums[1];
-			sim->dif_switch = nums[2];*/
-
 		}
 		if (lineCnt == 2) {//Initial process
-			
-			sim->proc_list[0].tnum = nums[1];
-			sim->proc_list[0].cur_tnum = 0;
-			//sim->cur_proc++;
+			set_init_proc(sim, nums);
 			numThreads = nums[1];
-
-			//Make an array that contains enough space for the threads in process 1
-			t_type * t = malloc(numThreads * sizeof *t);
-			sim->proc_list[0].t_list = t;
-			
-			printf("num threads in first process = %d\n", sim->proc_list[0].tnum);
 		}
 		if (lineCnt == 3) {//Initial thread
 			threadCnt++;
 			burstFlag = 1;
-			//Set arrival and number of cpu bursts
-			sim->proc_list[0].t_list[0].arrive = nums[1];
-			sim->proc_list[0].t_list[0].cpu_bursts = nums[2];
-			//Allocate the amount of bursts
-			burst * b = malloc(nums[2] * sizeof *b);
-			sim->proc_list[0].t_list[0].b_list = b;
-			//Changed from cur_b++ to cur_b = 0
-			sim->proc_list[0].t_list[0].cur_b = 0;
-			
 			numBursts = nums[2];
+			set_init_thread(sim, nums);
 			printf("thread 1 arrives %d and has %d cpu bursts\n", sim->proc_list[0].t_list[0].arrive, 
 			sim->proc_list[0].t_list[0].cpu_bursts);
-
 
 		//First three lines are always the same so below checks for the remaining lines	
 		} else if (burstFlag == 1 && burstCnt == numBursts) {//Reset for new thread info
@@ -91,14 +66,7 @@ int main (int argc, char * argv[]) {
 				burstFlag = 1;
 				threadCnt++;
 				numBursts = nums[2];
-				sim->proc_list[sim->cur_proc].cur_tnum++;
-
-				//Malloc space for the amount of bursts in each thread
-				burst * b = malloc(numBursts * sizeof *b);
-				int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
-				sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
-				sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
-				sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
+				set_new_thread(sim, nums);
 
 				//printf("threadCnt = %d\n", threadCnt);
 				printf("This line is the next thread in a process: ");
@@ -106,13 +74,7 @@ int main (int argc, char * argv[]) {
 
 			} else if (threadCnt == numThreads) {
 				//NEW PROCESS
-				sim->cur_proc++;
-				sim->proc_list[sim->cur_proc].tnum = nums[1];
-				int threads = nums[1];
-				sim->proc_list[sim->cur_proc].cur_tnum = 0;
-
-				t_type * t = malloc(threads * sizeof *t);
-				sim->proc_list[sim->cur_proc].t_list = t;
+				set_new_proc(sim, nums);
 
 				printf("This line is a process: ");
 				printf("%s", backupLine);
@@ -120,41 +82,20 @@ int main (int argc, char * argv[]) {
 				threadFlag = 1;
 				burstFlag = 0;
 				printf("num threads in this process = %d\n", numThreads);
-				
-				
 			}
 
 		} else if (burstFlag == 1) {
 			//NEW BURST
 			burstCnt++;
 			printf("This line is a burst: %s", backupLine);
+			set_new_burst(sim, nums);
 
-			//printf("sim->cur proc = %d\n", sim->cur_proc);
-			t_type cur_thread = sim->proc_list[sim->cur_proc]
-			.t_list[sim->proc_list[sim->cur_proc].cur_tnum];
-			//printf("cur thread = %d and cur burst = %d\n",
-			 //sim->proc_list[sim->cur_proc].cur_tnum, cur_thread.cur_b);
-			burst cur_burst = cur_thread.b_list[cur_thread.cur_b];
-
-			//Doesnt get to this line
-			//printf("This line is after finding the current thread and getting the current burst\n");
-			cur_burst.num = nums[0];
-			cur_burst.cpu = nums[1];
-			cur_burst.io = nums[2];
-			cur_thread.cur_b++;
-			//printf("burst num %d cpu %d and io %d\n", cur_burst.num, cur_burst.cpu, cur_burst.io);
 		} else if (threadFlag == 1) { //Next line is new thread info
-			printf("This line is a new thread: ");
+			printf("This line is a new thread after a process line: ");
 			printf("%s", backupLine);
 			numBursts = nums[2];
 
-			//Malloc space for the amount of bursts in each thread
-			burst * b = malloc(numBursts * sizeof *b);
-			int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
-
-			sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
-			sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
-			sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
+			set_tAfterPLine(sim, nums);
 
 			printf("numBursts = %d and burstCnt = %d\n", numBursts, burstCnt);
 			burstFlag = 1;
@@ -168,6 +109,32 @@ int main (int argc, char * argv[]) {
 	 sim->proc_list[0].tnum, sim->cur_proc);
 	printf("second thread in process 1 has %d bursts\n", sim->proc_list[0].t_list[1].cpu_bursts);
 	printf("first thread in process 2 has %d bursts\n", sim->proc_list[1].t_list[0].cpu_bursts);
+	
+
+
+
+	//Start making queues
+	int capacity = sim->process * 50;
+	printf("Capacity of heap = %d\n", capacity);
+	int heap_type = 0;//for min heap
+	CreateHeap(capacity, heap_type);
+
+
+	//Keep running while all threads or processes are not terminated
+	int threadTerminated = 0;
+	int threadTot = 0;
+	for (int i = 0; i < sim->process;i++) {
+		threadTot += sim->proc_list[i].tnum;
+	}
+	printf("Thread total = %d\n", threadTot);
+	// while (threadTerminated < threadTot) {
+
+	// }
+
+	//Deal with FCFS
+	if (flags[2] != 1) {//1 being flag -r was present and a time quantum given for rr
+		printf("This is the start of FCFS\n");
+	}
 
 	free_mem(sim);
 }
