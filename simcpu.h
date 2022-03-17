@@ -26,7 +26,7 @@ typedef struct sim_cont {
 } sim_cont;
 
 struct Heap{
-    int *arr;
+    t_type *arr;
     int count;
     int capacity;
     int heap_type; // for min heap , 1 for max heap
@@ -48,4 +48,4 @@ void insert(Heap *h, int key);
 void print(Heap *h);
 void heapify_bottom_top(Heap *h,int index);
 void heapify_top_bottom(Heap *h, int parent_node);
-int PopMin(Heap *h);
+t_type PopMin(Heap *h);
