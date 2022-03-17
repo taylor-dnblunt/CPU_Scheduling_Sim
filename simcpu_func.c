@@ -48,3 +48,11 @@ void free_mem(sim_cont * sim){
 	}
 	free(sim); //Free sim after burst list and t list are freed
 }
+
+void set_proc(sim_cont * sim, int * nums) {
+	proc * p = malloc(nums[0] * sizeof *p);
+	sim->proc_list = p;//Points to the beginning of the array containing the processes
+	sim->process = nums[0];
+	sim->same_switch = nums[1];
+	sim->dif_switch = nums[2];
+}
