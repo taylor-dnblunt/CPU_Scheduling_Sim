@@ -82,12 +82,14 @@ void set_init_thread(sim_cont * sim, int * nums) {
 
 void set_new_thread(sim_cont * sim, int * nums) {
 	int numBursts = nums[2];
+	int arrival = nums[1];
 	//Malloc space for the amount of bursts in each thread
 	burst * b = malloc(numBursts * sizeof *b);
 	sim->proc_list[sim->cur_proc].cur_tnum++;
 	int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].arrive = arrival;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
 }
 
@@ -113,10 +115,12 @@ void set_new_burst(sim_cont * sim, int * nums) {
 
 void set_tAfterPLine(sim_cont * sim, int * nums) {
 	int numBursts = nums[2];
+	int arrival = nums[1];
 	//Malloc space for the amount of bursts in each thread
 	burst * b = malloc(numBursts * sizeof *b);
 	int cur_thread = sim->proc_list[sim->cur_proc].cur_tnum;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].b_list = b;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].arrive = arrival;
 }
