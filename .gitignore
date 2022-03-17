@@ -1,4 +1,5 @@
 simcpu
+min_heap
 *.o
 *.save.1
 *.save
