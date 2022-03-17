@@ -36,7 +36,8 @@ Heap *CreateHeap(int capacity,int heap_type){
     h->heap_type = heap_type;
     h->count=0;
     h->capacity = capacity;
-    h->arr = (int *) malloc(capacity*sizeof(int)); //size in bytes
+    //make the array an array of threads to be sorted by arrival time
+    h->arr = (t_type *) malloc(capacity*sizeof(t_type)); //size in bytes
 
     //check if allocation succeed
     /*if ( h->arr == NULL){
@@ -48,17 +49,17 @@ Heap *CreateHeap(int capacity,int heap_type){
 
 void insert(Heap *h, int key){
     if( h->count < h->capacity){
-        h->arr[h->count] = key;
+        h->arr[h->count].arrive = key;
         heapify_bottom_top(h, h->count);
         h->count++;
     }
 }
 
-void heapify_bottom_top(Heap *h,int index){
-    int temp;
+void heapify_bottom_top(Heap *h,int index){//What is index in this case?
+    t_type temp;
     int parent_node = (index-1)/2;
 
-    if(h->arr[parent_node] > h->arr[index]){
+    if(h->arr[parent_node].arrive > h->arr[index].arrive){
         //swap and recursive call
         temp = h->arr[parent_node];
         h->arr[parent_node] = h->arr[index];
@@ -71,19 +72,25 @@ void heapify_top_bottom(Heap *h, int parent_node){
     int left = parent_node*2+1;
     int right = parent_node*2+2;
     int min;
-    int temp;
+    t_type temp;
 
-    if(left >= h->count || left <0)
+    if(left >= h->count || left <0) {
         left = -1;
-    if(right >= h->count || right <0)
+    }
+        
+    if(right >= h->count || right <0){
         right = -1;
-
-    if(left != -1 && h->arr[left] < h->arr[parent_node])
+    }
+    if(left != -1 && h->arr[left].arrive < h->arr[parent_node].arrive) {
         min=left;
-    else
+    } else {
         min =parent_node;
-    if(right != -1 && h->arr[right] < h->arr[min])
+    }
+        
+    if(right != -1 && h->arr[right].arrive < h->arr[min].arrive) {
         min = right;
+    }
+        
 
     if(min != parent_node){
         temp = h->arr[min];
@@ -95,18 +102,20 @@ void heapify_top_bottom(Heap *h, int parent_node){
     }
 }
 
-int PopMin(Heap *h){
-    int pop;
+t_type PopMin(Heap *h){
+    t_type pop;
     if(h->count==0){
         printf("\n__Heap is Empty__\n");
-        return -1;
-    }
+        
+    } else {
     // replace first node by last and delete last
-    pop = h->arr[0];
-    h->arr[0] = h->arr[h->count-1];
-    h->count--;
-    heapify_top_bottom(h, 0);
-    return pop;
+        pop = h->arr[0];
+        h->arr[0] = h->arr[h->count-1];
+        h->count--;
+        heapify_top_bottom(h, 0);
+        return pop;
+    }
+    
 }
 void print(Heap *h){
     int i;
