@@ -48,9 +48,10 @@ Heap *CreateHeap(int capacity,int heap_type){
     return h;
 }
 
-void insert(Heap *h, int key){
+//Want to insert the thread
+void insert(Heap *h, t_type thread){
     if( h->count < h->capacity){
-        h->arr[h->count].arrive = key;
+        h->arr[h->count] = thread;
         heapify_bottom_top(h, h->count);
         h->count++;
     }
@@ -122,7 +123,7 @@ void print(Heap *h){
     int i;
     printf("____________Print Heap_____________\n");
     for(i=0;i< h->count;i++){
-        printf("-> %d ",h->arr[i]);
+        printf("-> %d ",h->arr[i].arrive);
     }
     printf("->__/\\__\n");
 }
