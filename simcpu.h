@@ -25,11 +25,27 @@ typedef struct sim_cont {
 	int dif_switch;
 } sim_cont;
 
-void flag_checker(int argc, char * argv[], int * flag_arr);
+struct Heap{
+    int *arr;
+    int count;
+    int capacity;
+    int heap_type; // for min heap , 1 for max heap
+};
+typedef struct Heap Heap;
+
+/*void flag_checker(int argc, char * argv[], int * flag_arr);
 void line_parse(char * line, int * num_arr);
 void free_mem(sim_cont * sim);
 void swap(int *a, int *b);
 void heapify(int array[], int size, int i);
 void insert(int array[], int newNum);
 void deleteRoot(int array[], int num);
-void printArray(int array[], int size);
+void printArray(int array[], int size);*/
+
+
+Heap *CreateHeap(int capacity,int heap_type);
+void insert(Heap *h, int key);
+void print(Heap *h);
+void heapify_bottom_top(Heap *h,int index);
+void heapify_top_bottom(Heap *h, int parent_node);
+int PopMin(Heap *h);
