@@ -102,22 +102,22 @@ int main (int argc, char * argv[]) {
 			threadCnt = 1;
 		}
 	}
-	printf("\n");
-	printf("Line count = %d\n", lineCnt);
-	printf("p = %d, ss = %d, ds = %d\n", sim->process, sim->same_switch, sim->dif_switch);
-	printf("process 1 in the sim has %d threads and sim current process = %d\n",
-	 sim->proc_list[0].tnum, sim->cur_proc);
-	printf("second thread in process 1 has %d bursts\n", sim->proc_list[0].t_list[1].cpu_bursts);
-	printf("first thread in process 2 has %d bursts\n", sim->proc_list[1].t_list[0].cpu_bursts);
+	printf("\n\n\n");
+	// printf("Line count = %d\n", lineCnt);
+	// printf("p = %d, ss = %d, ds = %d\n", sim->process, sim->same_switch, sim->dif_switch);
+	// printf("process 1 in the sim has %d threads and sim current process = %d\n",
+	//  sim->proc_list[0].tnum, sim->cur_proc);
+	// printf("second thread in process 1 has %d bursts\n", sim->proc_list[0].t_list[1].cpu_bursts);
+	printf("first thread in process 2 has %d bursts and arrived at %d\n",
+	 sim->proc_list[1].t_list[0].cpu_bursts, sim->proc_list[1].t_list[0].arrive);
 	
-
-
-
-	//Start making queues
+	//Start making queue
 	int capacity = sim->process * 50;
 	printf("Capacity of heap = %d\n", capacity);
 	int heap_type = 0;//for min heap
-	CreateHeap(capacity, heap_type);
+
+	//Initialize pq
+	Heap * pq = CreateHeap(capacity, heap_type);
 
 
 	//Keep running while all threads or processes are not terminated
@@ -125,8 +125,16 @@ int main (int argc, char * argv[]) {
 	int threadTot = 0;
 	for (int i = 0; i < sim->process;i++) {
 		threadTot += sim->proc_list[i].tnum;
+		for(int j = 0; j < sim->proc_list[i].tnum;j++) {
+			t_type thread = sim->proc_list[i].t_list[j];
+			printf("thread arrival = %d\n", thread.arrive);
+			insert(pq, thread);
+		}
 	}
 	printf("Thread total = %d\n", threadTot);
+	print(pq);
+
+	//Essentially while pq not empty i.e there are still threads that need processing
 	// while (threadTerminated < threadTot) {
 
 	// }
