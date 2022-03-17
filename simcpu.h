@@ -54,7 +54,7 @@ void printArray(int array[], int size);*/
 
 //min_heap.c funcs
 Heap *CreateHeap(int capacity,int heap_type);
-void insert(Heap *h, int key);
+void insert(Heap *h, t_type thread);
 void print(Heap *h);
 void heapify_bottom_top(Heap *h,int index);
 void heapify_top_bottom(Heap *h, int parent_node);
