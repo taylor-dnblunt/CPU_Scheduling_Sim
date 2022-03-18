@@ -88,6 +88,7 @@ int main (int argc, char * argv[]) {
 			//NEW BURST
 			burstCnt++;
 			printf("This line is a burst: %s", backupLine);
+			printf("The cpu and io time %d and %d\n", nums[1], nums[2]);
 			set_new_burst(sim, nums);
 
 		} else if (threadFlag == 1) { //Next line is new thread info
@@ -129,27 +130,45 @@ int main (int argc, char * argv[]) {
 	for (int i = 0; i < sim->process;i++) {
 		threadTot += sim->proc_list[i].tnum;
 		for(int j = 0; j < sim->proc_list[i].tnum;j++) {
+			//This makes a new thread that has the same properties but isnt referencing the list
 			t_type thread = sim->proc_list[i].t_list[j];
+			//Reset cur_b so it starts on the first burst and not the last
+			thread.cur_b = 0;
 			printf("thread arrival = %d\n", thread.arrive);
 			insert(pq, thread);
 		}
 	}
 	printf("Thread total = %d\n", threadTot);
-	t_type thread = PopMin(pq);
-	thread = PopMin(pq);
-	thread = PopMin(pq);
-	print(pq);
-
+	t_type thread;
+	int time = 0;
+	int next_e = 0;
 
 	//Essentially while pq not empty i.e there are still threads that need processing
-	// while (threadTerminated < threadTot) {
+	//while (threadTerminated < threadTot) {
+		//Deal with FCFS
+		if (flags[2] != 1) {//1 being flag -r was present and a time quantum given for rr
+			printf("This is the start of FCFS\n");
+			//Threads switch between cpu time and IO
+			thread = PopMin(pq);
+			printf("thread 1 and burst 1 cpu and io = %d and %d\n",thread.b_list[thread.cur_b].cpu, thread.b_list[thread.cur_b].io);
+			time = thread.arrive;
+			printf("The current event time %d\n", time);
+			//In FCFS do its CPU then 'arrive' after next IO
+			thread.arrive = thread.b_list[thread.cur_b].cpu + thread.b_list[thread.cur_b].io;
+			printf("New thread arrive time %d\n", thread.arrive);
+			next_e = thread.b_list[thread.cur_b].cpu;
+			time = next_e;
+			//Thread goes out for io after cpu and when back needs new burst
+			thread.cur_b++;
+			printf("New event time after cpu burst %d\n", time);
+			//if statement for at event time if there are no threads that have arrived
+			//go to next thread event time
 
-	// }
+		}
+		
+	//}
 
-	//Deal with FCFS
-	if (flags[2] != 1) {//1 being flag -r was present and a time quantum given for rr
-		printf("This is the start of FCFS\n");
-	}
+	
 
 	free_mem(sim);
 }
