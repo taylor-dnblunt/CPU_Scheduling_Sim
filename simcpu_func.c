@@ -106,13 +106,17 @@ void set_new_proc(sim_cont * sim, int * nums) {
 }
 
 void set_new_burst(sim_cont * sim, int * nums) {
-	t_type cur_thread = sim->proc_list[sim->cur_proc]
+	t_type * cur_thread = &sim->proc_list[sim->cur_proc]
 	.t_list[sim->proc_list[sim->cur_proc].cur_tnum];
-	burst cur_burst = cur_thread.b_list[cur_thread.cur_b];
-	cur_burst.num = nums[0];
-	cur_burst.cpu = nums[1];
-	cur_burst.io = nums[2];
-	cur_thread.cur_b++;
+	burst * cur_burst = &((*cur_thread).b_list[(*cur_thread).cur_b]);
+	// printf("cpu and io %d %d\n", nums[1], nums[2]);
+	(*cur_burst).num = nums[0];
+	(*cur_burst).cpu = nums[1];
+	(*cur_burst).io = nums[2];
+	//Not linking burst to the thread?
+	//Might be setting a new instance of something thats not actually the list
+	// printf("cpu of burst %d\n", cur_thread.b_list[cur_thread.cur_b].cpu);
+	(*cur_thread).cur_b++;
 }
 
 void set_tAfterPLine(sim_cont * sim, int * nums) {
