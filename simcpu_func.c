@@ -78,6 +78,7 @@ void set_init_thread(sim_cont * sim, int * nums) {
 	burst * b = malloc(numBursts * sizeof *b);
 	sim->proc_list[0].t_list[0].b_list = b;
 	sim->proc_list[0].t_list[0].cur_b = 0;
+	sim->proc_list[0].t_list[0].parent_process = 0;
 }
 
 void set_new_thread(sim_cont * sim, int * nums) {
@@ -91,6 +92,7 @@ void set_new_thread(sim_cont * sim, int * nums) {
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].arrive = arrival;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].parent_process = sim->cur_proc;
 }
 
 void set_new_proc(sim_cont * sim, int * nums) {
@@ -123,4 +125,6 @@ void set_tAfterPLine(sim_cont * sim, int * nums) {
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cur_b = 0;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].cpu_bursts = numBursts;
 	sim->proc_list[sim->cur_proc].t_list[cur_thread].arrive = arrival;
+	//Check that parent process does the trick
+	sim->proc_list[sim->cur_proc].t_list[cur_thread].parent_process = sim->cur_proc;
 }

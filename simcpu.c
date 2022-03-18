@@ -108,8 +108,11 @@ int main (int argc, char * argv[]) {
 	// printf("process 1 in the sim has %d threads and sim current process = %d\n",
 	//  sim->proc_list[0].tnum, sim->cur_proc);
 	// printf("second thread in process 1 has %d bursts\n", sim->proc_list[0].t_list[1].cpu_bursts);
+	// printf("Parent process of this thread is %d\n", sim->proc_list[1].t_list[1].parent_process);
+	// printf("Parent process of this thread is %d\n", sim->proc_list[0].t_list[3].parent_process);
 	printf("first thread in process 2 has %d bursts and arrived at %d\n",
 	 sim->proc_list[1].t_list[0].cpu_bursts, sim->proc_list[1].t_list[0].arrive);
+	
 	
 	//Start making queue
 	int capacity = sim->process * 50;
@@ -132,7 +135,11 @@ int main (int argc, char * argv[]) {
 		}
 	}
 	printf("Thread total = %d\n", threadTot);
+	t_type thread = PopMin(pq);
+	thread = PopMin(pq);
+	thread = PopMin(pq);
 	print(pq);
+
 
 	//Essentially while pq not empty i.e there are still threads that need processing
 	// while (threadTerminated < threadTot) {

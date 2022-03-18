@@ -8,6 +8,7 @@ typedef struct threads {
 	int arrive;
 	int cpu_bursts;
 	int cur_b;
+	int parent_process;
 	burst * b_list;
 } t_type;
 
