@@ -177,8 +177,7 @@ int main (int argc, char * argv[]) {
 			prev_proc_num = thread.parent_process;
 			//cpu time is right but IO is wrong
 			sim->proc_list[thread.parent_process].t_list[thread.thread_num].cpu_tot += thread.b_list[thread.cur_b].cpu;
-			sim->proc_list[thread.parent_process].t_list[thread.thread_num].io_tot += thread.b_list[thread.cur_b].io;
-
+			
 			//Below goes to the next burst not the current one
 			thread.cur_b++;
 
@@ -219,9 +218,14 @@ int main (int argc, char * argv[]) {
 	printf("Average turnaround time = %.2f\n", avg_turn_time);
 	printf("There were %d cpu bursts and there should be 8\n\n\n", num_of_bursts);
 
+	//Essentially the detailed flag
 	for (int i = 0; i < sim->process; i++) {
 		for (int j = 0; j < sim->proc_list[i].tnum; j++) {
 			t_type t = sim->proc_list[i].t_list[j];
+			t.io_tot = 0;
+			for (int k = 0; k < sim->proc_list[i].t_list[j].cpu_bursts - 1; k++) {
+				t.io_tot += sim->proc_list[i].t_list[j].b_list[k].io;
+			}
 			printf("Thread %d of Process %d: \n", j+1, i+1);
 			printf("Arrival time: %d\n", t.init_arrive);
 			printf("Service time: %d units, IO time: %d units, turnaround time: %d units, finish time: %d\n"

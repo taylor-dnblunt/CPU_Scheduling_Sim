@@ -115,13 +115,15 @@ void set_new_burst(sim_cont * sim, int * nums) {
 	t_type * cur_thread = &sim->proc_list[sim->cur_proc]
 	.t_list[sim->proc_list[sim->cur_proc].cur_tnum];
 	burst * cur_burst = &((*cur_thread).b_list[(*cur_thread).cur_b]);
-	// printf("cpu and io %d %d\n", nums[1], nums[2]);
 	(*cur_burst).num = nums[0];
 	(*cur_burst).cpu = nums[1];
+	//Can probably remove the if-else statement
+	if ((*cur_burst).num == cur_thread->cpu_bursts + 1) {
+		(*cur_burst).io = 0;
+	} else {
+		(*cur_burst).io = nums[2];
+	}
 	(*cur_burst).io = nums[2];
-	//Not linking burst to the thread?
-	//Might be setting a new instance of something thats not actually the list
-	// printf("cpu of burst %d\n", cur_thread.b_list[cur_thread.cur_b].cpu);
 	(*cur_thread).cur_b++;
 }
 
