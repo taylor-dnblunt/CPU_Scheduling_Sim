@@ -155,6 +155,8 @@ int main (int argc, char * argv[]) {
 			
 			//Threads switch between cpu time and IO
 			thread = PopMin(pq);
+			printf("This thread is P%d B%d with arrival thread arr time %d\n", thread.parent_process, thread.cur_b, thread.arrive);
+
 			if (prev_proc_num != -1) {//Check to make sure its not the first thread when theres no prev proc
 				if (thread.parent_process == prev_proc_num) {//Same process switch time
 					sim_time += sim->same_switch;
@@ -162,24 +164,30 @@ int main (int argc, char * argv[]) {
 					sim_time += sim->dif_switch;
 				}
 			}
-			// arr_time = thread.arrive;
-			// sim_time += arr_time;
+
 			printf("Enters cpu at %d\n", sim_time);
+			//Set when to enter the ready q again
+			thread.arrive = thread.b_list[thread.cur_b].cpu + thread.b_list[thread.cur_b].io + sim_time;
 
 			//In FCFS do its CPU then 'arrive' after next IO
-			thread.arrive = thread.b_list[thread.cur_b].cpu + thread.b_list[thread.cur_b].io;
 			printf("Next thread arrive time with new burst %d\n", thread.arrive);
 			next_e = thread.b_list[thread.cur_b].cpu;
 			arr_time = next_e;
 			sim_time += arr_time;
 			thread.cur_b++;
 			prev_proc_num = thread.parent_process;
+
 			if (thread.cur_b == thread.cpu_bursts) {//This is the last burst and does
 				// not go back into the queue
 				threadTerminated++;
-				printf("Thread termination time %d\n", arr_time);
+				//Count up threads terminated for the process and store time once both are done
+				sim->proc_list[thread.parent_process].threads_terminated++;
+				if (sim->proc_list[thread.parent_process].threads_terminated == sim->proc_list[thread.parent_process].tnum) {
+					printf("This process is complete at time %d\n", sim_time);
+					sim->proc_list[thread.parent_process].time_finished = sim_time;
+				}
+				printf("Thread termination time %d\n", sim_time);
 			} else {//Theres still some cpu bursts left and it needs to go back in queue
-				
 				insert(pq, thread);	
 			}
 			//Thread goes out for io after cpu and when back needs new burst
@@ -191,8 +199,17 @@ int main (int argc, char * argv[]) {
 			num_of_bursts++;
 			
 		}
+		printf("\n");
 		printf("\n\n");
 	}
+
+	float avg_turn_time = 0;
+	for (int i = 0; i < sim->process; i++) {
+		avg_turn_time += sim->proc_list[i].time_finished;
+	}
+	avg_turn_time = avg_turn_time/sim->process;
+	printf("Total time required = %d\n", sim_time);
+	printf("Average turnaround time = %.2f\n", avg_turn_time);
 	printf("There were %d cpu bursts and there should be 8\n", num_of_bursts);
 	
 
