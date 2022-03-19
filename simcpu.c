@@ -357,18 +357,20 @@ int main (int argc, char * argv[]) {
 	printf("CPU Utilization is %.1f%%\n\n\n", utilization);
 
 	//Essentially the detailed flag
-	for (int i = 0; i < sim->process; i++) {
-		for (int j = 0; j < sim->proc_list[i].tnum; j++) {
-			t_type t = sim->proc_list[i].t_list[j];
-			t.io_tot = 0;
-			for (int k = 0; k < sim->proc_list[i].t_list[j].cpu_bursts - 1; k++) {
-				t.io_tot += sim->proc_list[i].t_list[j].b_list[k].io;
+	if (flags[0] == 1) {//The -d flag is given
+		for (int i = 0; i < sim->process; i++) {
+			for (int j = 0; j < sim->proc_list[i].tnum; j++) {
+				t_type t = sim->proc_list[i].t_list[j];
+				t.io_tot = 0;
+				for (int k = 0; k < sim->proc_list[i].t_list[j].cpu_bursts - 1; k++) {
+					t.io_tot += sim->proc_list[i].t_list[j].b_list[k].io;
+				}
+				printf("Thread %d of Process %d: \n", j+1, i+1);
+				printf("Arrival time: %d\n", t.init_arrive);
+				printf("Service time: %d units, IO time: %d units, turnaround time: %d units, finish time: %d\n"
+				, t.cpu_tot, t.io_tot, (t.time_finished - t.init_arrive), t.time_finished);
+				printf("\n");
 			}
-			printf("Thread %d of Process %d: \n", j+1, i+1);
-			printf("Arrival time: %d\n", t.init_arrive);
-			printf("Service time: %d units, IO time: %d units, turnaround time: %d units, finish time: %d\n"
-			, t.cpu_tot, t.io_tot, (t.time_finished - t.init_arrive), t.time_finished);
-			printf("\n");
 		}
 	}
 	
