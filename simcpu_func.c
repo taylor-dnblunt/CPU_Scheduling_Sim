@@ -61,6 +61,7 @@ void set_init_proc(sim_cont * sim, int * nums) {
 	int numThreads = nums[1];
 	sim->proc_list[0].tnum = numThreads;
 	sim->proc_list[0].cur_tnum = 0;
+	sim->proc_list[0].threads_terminated = 0;
 
 	//Make an array that contains enough space for the threads in process 1
 	t_type * t = malloc(numThreads * sizeof *t);
@@ -100,6 +101,7 @@ void set_new_proc(sim_cont * sim, int * nums) {
 	sim->proc_list[sim->cur_proc].tnum = nums[1];
 	int threads = nums[1];
 	sim->proc_list[sim->cur_proc].cur_tnum = 0;
+	sim->proc_list[sim->cur_proc].threads_terminated = 0;
 	//Malloc space for thread array
 	t_type * t = malloc(threads * sizeof *t);
 	sim->proc_list[sim->cur_proc].t_list = t;

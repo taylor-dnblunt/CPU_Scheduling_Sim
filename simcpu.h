@@ -15,6 +15,8 @@ typedef struct threads {
 typedef struct process {
 	int tnum;
 	int cur_tnum;
+	int threads_terminated;
+	int time_finished;
 	t_type * t_list;
 } proc;
 
