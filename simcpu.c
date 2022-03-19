@@ -170,8 +170,9 @@ int main (int argc, char * argv[]) {
 
 
 	//Essentially while pq not empty i.e there are still threads that need processing
-	do /*(threadTerminated < threadTot)*/ {
-		//Deal with FCFS
+	while (threadTerminated < threadTot) {
+
+		//This is the start of FCFS
 		if (flags[2] != 1) {//1 being flag -r was present and a time quantum given for rr
 			printf("FCFS\n");
 			
@@ -228,16 +229,7 @@ int main (int argc, char * argv[]) {
 			num_of_bursts++;
 			
 
-
-
-
-
-
-
-
-
-
-
+		//This is the start of round robin
 
 		} else if (flags[2] == 1) {//Flag -r and quantum are given
 			printf("RR\n");
@@ -341,11 +333,11 @@ int main (int argc, char * argv[]) {
 		printf("\n");
 		printf("\n\n");
 		dowhile++;
-	} while (dowhile < 11);
+	}
 
 
 	//FIXME: Add this code back in when done with RR
-	/*float avg_turn_time = 0;
+	float avg_turn_time = 0;
 	int cpu_ut = 0;
 	for (int i = 0; i < sim->process; i++) {
 		avg_turn_time += sim->proc_list[i].time_finished;
@@ -359,7 +351,7 @@ int main (int argc, char * argv[]) {
 
 	printf("Total time required = %d\n", sim_time);
 	printf("Average turnaround time = %.2f\n", avg_turn_time);
-	printf("There were %d cpu bursts and there should be 8\n", num_of_bursts);
+	// printf("There were %d cpu bursts and there should be 8\n", num_of_bursts);
 
 	//CPU utilization = ((total - time in cpu)/total) * 100
 	printf("CPU Utilization is %.1f%%\n\n\n", utilization);
@@ -378,7 +370,7 @@ int main (int argc, char * argv[]) {
 			, t.cpu_tot, t.io_tot, (t.time_finished - t.init_arrive), t.time_finished);
 			printf("\n");
 		}
-	}*/
+	}
 	
 
 	free_mem(sim);
