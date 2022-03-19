@@ -137,47 +137,63 @@ int main (int argc, char * argv[]) {
 			insert(pq, thread);
 		}
 	}
-	printf("Thread total = %d\n", threadTot);
+	printf("Thread total = %d\n\n", threadTot);
 	t_type thread;
-	int time = 0;
+	int arr_time = 0;
 	int next_e = 0;
-	// int num_of_bursts = 0;
+	int num_of_bursts = 0;
+	int prev_proc_num = -1;
+	//Need a total time to keep track of everything
+	int sim_time = 0;
+	printf("numbursts in process 2 thread 1 = %d\n", sim->proc_list[1].t_list[0].cpu_bursts);
 
 	//Essentially while pq not empty i.e there are still threads that need processing
 	while (threadTerminated < threadTot) {
 		//Deal with FCFS
 		if (flags[2] != 1) {//1 being flag -r was present and a time quantum given for rr
-			printf("This is the start of FCFS\n");
+			printf("FCFS\n");
+			
 			//Threads switch between cpu time and IO
 			thread = PopMin(pq);
-			//printf("thread 1 and burst 1 cpu and io = %d and %d\n",thread.b_list[thread.cur_b].cpu, thread.b_list[thread.cur_b].io);
-			time = thread.arrive;
-			printf("The current event time %d\n", time);
+			if (prev_proc_num != -1) {//Check to make sure its not the first thread when theres no prev proc
+				if (thread.parent_process == prev_proc_num) {//Same process switch time
+					sim_time += sim->same_switch;
+				} else if (thread.parent_process != prev_proc_num) {//Dif process switch time
+					sim_time += sim->dif_switch;
+				}
+			}
+			// arr_time = thread.arrive;
+			// sim_time += arr_time;
+			printf("Enters cpu at %d\n", sim_time);
+
 			//In FCFS do its CPU then 'arrive' after next IO
 			thread.arrive = thread.b_list[thread.cur_b].cpu + thread.b_list[thread.cur_b].io;
-			printf("New thread arrive time %d\n", thread.arrive);
+			printf("Next thread arrive time with new burst %d\n", thread.arrive);
 			next_e = thread.b_list[thread.cur_b].cpu;
-			time = next_e;
-			
+			arr_time = next_e;
+			sim_time += arr_time;
+			thread.cur_b++;
+			prev_proc_num = thread.parent_process;
 			if (thread.cur_b == thread.cpu_bursts) {//This is the last burst and does
 				// not go back into the queue
 				threadTerminated++;
-				printf("Thread termination time %d\n", time);
+				printf("Thread termination time %d\n", arr_time);
 			} else {//Theres still some cpu bursts left and it needs to go back in queue
-				thread.cur_b++;
+				
 				insert(pq, thread);	
 			}
 			//Thread goes out for io after cpu and when back needs new burst
 			
 			
-			printf("New event time after cpu burst %d\n", time);
+			printf("New event time after cpu burst %d\n", sim_time);
 			//if statement for at event time if there are no threads that have arrived
 			//go to next thread event time
-			//num_of_bursts++;
+			num_of_bursts++;
+			
 		}
-		
+		printf("\n\n");
 	}
-	// printf("There were %d cpu bursts and there should be \n", num_of_bursts);//FIXME
+	printf("There were %d cpu bursts and there should be 8\n", num_of_bursts);
 	
 
 	free_mem(sim);
