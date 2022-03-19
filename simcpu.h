@@ -5,7 +5,13 @@ typedef struct burst {
 } burst;
 
 typedef struct threads {
+	int thread_num;
 	int arrive;
+	int init_arrive;
+	int time_finished;
+	float turnaround;
+	int cpu_tot;
+	int io_tot;
 	int cpu_bursts;
 	int cur_b;
 	int parent_process;
