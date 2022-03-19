@@ -210,13 +210,23 @@ int main (int argc, char * argv[]) {
 	}
 
 	float avg_turn_time = 0;
+	int cpu_ut = 0;
 	for (int i = 0; i < sim->process; i++) {
 		avg_turn_time += sim->proc_list[i].time_finished;
+		for (int j = 0; j < sim->proc_list[i].tnum; j++) {
+			cpu_ut += sim->proc_list[i].t_list[j].cpu_tot;
+		}
 	}
 	avg_turn_time = avg_turn_time/sim->process;
+	printf("cpu ut = %d\n", cpu_ut);
+	float utilization = (float)cpu_ut / (float)sim_time * 100;
+
 	printf("Total time required = %d\n", sim_time);
 	printf("Average turnaround time = %.2f\n", avg_turn_time);
-	printf("There were %d cpu bursts and there should be 8\n\n\n", num_of_bursts);
+	printf("There were %d cpu bursts and there should be 8\n", num_of_bursts);
+
+	//CPU utilization = ((total - time in cpu)/total) * 100
+	printf("CPU Utilization is %.1f%%\n\n\n", utilization);
 
 	//Essentially the detailed flag
 	for (int i = 0; i < sim->process; i++) {
