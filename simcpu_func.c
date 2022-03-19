@@ -3,10 +3,13 @@
 #include <string.h>
 #include "simcpu.h"
 
-void flag_checker(int argc, char * argv[], int * flag_arr) {
+int flag_checker(int argc, char * argv[], int * flag_arr) {
 
 	printf("FLAG_CHECKER\n");
-
+	// for (int i = 0; i < argc; i++) {
+	// 	printf("%s\n", argv[i]);
+	// }
+	int quantum = 0;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp("-d", argv[i]) == 0) {
 			printf("set detailed mode\n");
@@ -17,9 +20,16 @@ void flag_checker(int argc, char * argv[], int * flag_arr) {
 			flag_arr[1] = 1;
 		}
 		if (strcmp("-r", argv[i]) == 0) {
-			printf("Round robin schedling with time quantum = ");
-			flag_arr[2] = 1;
-			printf("%d\n", atoi(argv[argc - 1]));
+			if (argv[i + 1] != NULL) {//Error checking if there is no quantum supplied
+				printf("Round robin schedling with time quantum = ");
+				flag_arr[2] = 1;
+				printf("%d\n", atoi(argv[argc - 1]));
+				return atoi(argv[i+1]);
+			} else {
+				//Return error code for no time quantum given
+				return -1;
+			}
+			
 		}
 	}
 }
@@ -117,6 +127,7 @@ void set_new_burst(sim_cont * sim, int * nums) {
 	burst * cur_burst = &((*cur_thread).b_list[(*cur_thread).cur_b]);
 	(*cur_burst).num = nums[0];
 	(*cur_burst).cpu = nums[1];
+	(*cur_burst).cpu_left = nums[1];
 	//Can probably remove the if-else statement
 	if ((*cur_burst).num == cur_thread->cpu_bursts + 1) {
 		(*cur_burst).io = 0;
