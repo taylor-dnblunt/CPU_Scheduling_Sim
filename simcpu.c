@@ -174,12 +174,19 @@ int main (int argc, char * argv[]) {
 			next_e = thread.b_list[thread.cur_b].cpu;
 			arr_time = next_e;
 			sim_time += arr_time;
-			thread.cur_b++;
 			prev_proc_num = thread.parent_process;
+			//cpu time is right but IO is wrong
+			sim->proc_list[thread.parent_process].t_list[thread.thread_num].cpu_tot += thread.b_list[thread.cur_b].cpu;
+			sim->proc_list[thread.parent_process].t_list[thread.thread_num].io_tot += thread.b_list[thread.cur_b].io;
+
+			//Below goes to the next burst not the current one
+			thread.cur_b++;
 
 			if (thread.cur_b == thread.cpu_bursts) {//This is the last burst and does
 				// not go back into the queue
 				threadTerminated++;
+				sim->proc_list[thread.parent_process].t_list[thread.thread_num].time_finished = sim_time;
+
 				//Count up threads terminated for the process and store time once both are done
 				sim->proc_list[thread.parent_process].threads_terminated++;
 				if (sim->proc_list[thread.parent_process].threads_terminated == sim->proc_list[thread.parent_process].tnum) {
@@ -210,7 +217,18 @@ int main (int argc, char * argv[]) {
 	avg_turn_time = avg_turn_time/sim->process;
 	printf("Total time required = %d\n", sim_time);
 	printf("Average turnaround time = %.2f\n", avg_turn_time);
-	printf("There were %d cpu bursts and there should be 8\n", num_of_bursts);
+	printf("There were %d cpu bursts and there should be 8\n\n\n", num_of_bursts);
+
+	for (int i = 0; i < sim->process; i++) {
+		for (int j = 0; j < sim->proc_list[i].tnum; j++) {
+			t_type t = sim->proc_list[i].t_list[j];
+			printf("Thread %d of Process %d: \n", j+1, i+1);
+			printf("Arrival time: %d\n", t.init_arrive);
+			printf("Service time: %d units, IO time: %d units, turnaround time: %d units, finish time: %d\n"
+			, t.cpu_tot, t.io_tot, (t.time_finished - t.init_arrive), t.time_finished);
+			printf("\n");
+		}
+	}
 	
 
 	free_mem(sim);
