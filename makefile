@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=gnu99 -pthread -Wpedantic
+CFLAGS = -std=gnu99 -Wpedantic
 
 all: simcpu
 
@@ -11,9 +11,6 @@ simcpu: simcpu.o simcpu_func.o min_heap.o
 
 simcpu_func.o: simcpu_func.c
 	$(CC) $(CFLAGS) -c simcpu_func.c -o simcpu_func.o
-
-heap.o: heap.c
-	$(CC) $(CFLAGS) -c heap.c -o heap.o
 
 min_heap.o: min_heap.c
 	$(CC) $(CFLAGS) -c min_heap.c -o min_heap.o
