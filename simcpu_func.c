@@ -5,25 +5,17 @@
 
 int flag_checker(int argc, char * argv[], int * flag_arr) {
 
-	printf("FLAG_CHECKER\n");
-	// for (int i = 0; i < argc; i++) {
-	// 	printf("%s\n", argv[i]);
-	// }
 	int quantum = 0;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp("-d", argv[i]) == 0) {
-			printf("set detailed mode\n");
 			flag_arr[0] = 1;
 		}
 		if (strcmp("-v", argv[i]) == 0) {
-			printf("set verbose mode\n");
 			flag_arr[1] = 1;
 		}
 		if (strcmp("-r", argv[i]) == 0) {
 			if (argv[i + 1] != NULL) {//Error checking if there is no quantum supplied
-				printf("Round robin schedling with time quantum = ");
 				flag_arr[2] = 1;
-				printf("%d\n", atoi(argv[argc - 1]));
 				return atoi(argv[i+1]);
 			} else {
 				//Return error code for no time quantum given
@@ -40,7 +32,6 @@ void line_parse(char * line, int * num_arr) {
 	const char s[2] = " ";
 	int i = 0;
 	for (char * p = strtok(line, s); p != NULL; p = strtok(NULL, s)) {
-		//printf("%d ", atoi(p));
 		num_arr[i] = atoi(p);
 		i++;
 	}
@@ -76,8 +67,6 @@ void set_init_proc(sim_cont * sim, int * nums) {
 	//Make an array that contains enough space for the threads in process 1
 	t_type * t = malloc(numThreads * sizeof *t);
 	sim->proc_list[0].t_list = t;
-	
-	printf("num threads in first process = %d\n", sim->proc_list[0].tnum);
 }
 
 void set_init_thread(sim_cont * sim, int * nums) {

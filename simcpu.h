@@ -55,13 +55,6 @@ void set_new_proc(sim_cont * sim, int * nums);
 void set_new_burst(sim_cont * sim, int * nums);
 void set_tAfterPLine(sim_cont * sim, int * nums);
 
-//Unused from heap.c
-/*void swap(int *a, int *b);
-void heapify(int array[], int size, int i);
-void insert(int array[], int newNum);
-void deleteRoot(int array[], int num);
-void printArray(int array[], int size);*/
-
 //min_heap.c funcs
 Heap *CreateHeap(int capacity,int heap_type);
 void insert(Heap *h, t_type thread);
