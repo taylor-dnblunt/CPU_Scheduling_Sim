@@ -10,7 +10,7 @@
 int main (int argc, char * argv[]) {
 
 	int flags[3] = {0, 0, 0};
-	int nums[3] = {0, 0, 0}; //FIXME: potential problem here because its usually 2 or 3 numbers
+	int nums[3] = {0, 0, 0};
 	int quantum = 0;
 
 	quantum = flag_checker(argc, argv, flags);
@@ -57,8 +57,8 @@ int main (int argc, char * argv[]) {
 			burstFlag = 1;
 			numBursts = nums[2];
 			set_init_thread(sim, nums);
-			printf("thread 1 arrives %d and has %d cpu bursts\n", sim->proc_list[0].t_list[0].arrive, 
-			sim->proc_list[0].t_list[0].cpu_bursts);
+			//printf("thread 1 arrives %d and has %d cpu bursts\n", sim->proc_list[0].t_list[0].arrive, 
+			//sim->proc_list[0].t_list[0].cpu_bursts);
 
 		//First three lines are always the same so below checks for the remaining lines	
 		} else if (burstFlag == 1 && burstCnt == numBursts) {//Reset for new thread info
@@ -73,35 +73,35 @@ int main (int argc, char * argv[]) {
 				set_new_thread(sim, nums);
 
 				//printf("threadCnt = %d\n", threadCnt);
-				printf("This line is the next thread in a process: ");
-				printf("%sand has %d bursts\n", backupLine, numBursts);
+				//printf("This line is the next thread in a process: ");
+				//printf("%sand has %d bursts\n", backupLine, numBursts);
 
 			} else if (threadCnt == numThreads) {
 				//NEW PROCESS
 				set_new_proc(sim, nums);
 
-				printf("This line is a process: ");
-				printf("%s", backupLine);
+				//printf("This line is a process: ");
+				//printf("%s", backupLine);
 				numThreads = nums[1];
 				threadFlag = 1;
 				burstFlag = 0;
-				printf("num threads in this process = %d\n", numThreads);
+				//printf("num threads in this process = %d\n", numThreads);
 			}
 
 		} else if (burstFlag == 1) {
 			//NEW BURST
 			burstCnt++;
-			printf("This line is a burst: %s", backupLine);
+			//printf("This line is a burst: %s", backupLine);
 			set_new_burst(sim, nums);
 
 		} else if (threadFlag == 1) { //Next line is new thread info
-			printf("This line is a new thread after a process line: ");
-			printf("%s", backupLine);
+			//printf("This line is a new thread after a process line: ");
+			//printf("%s", backupLine);
 			numBursts = nums[2];
 
 			set_tAfterPLine(sim, nums);
 
-			printf("numBursts = %d and burstCnt = %d\n", numBursts, burstCnt);
+			//printf("numBursts = %d and burstCnt = %d\n", numBursts, burstCnt);
 			burstFlag = 1;
 			threadCnt = 1;
 		}
@@ -114,8 +114,8 @@ int main (int argc, char * argv[]) {
 	// printf("second thread in process 1 has %d bursts\n", sim->proc_list[0].t_list[1].cpu_bursts);
 	// printf("Parent process of this thread is %d\n", sim->proc_list[1].t_list[1].parent_process);
 	// printf("Parent process of this thread is %d\n", sim->proc_list[0].t_list[3].parent_process);
-	printf("first thread in process 2 has %d bursts and arrived at %d\n",
-	 sim->proc_list[1].t_list[0].cpu_bursts, sim->proc_list[1].t_list[0].arrive);
+	//printf("first thread in process 2 has %d bursts and arrived at %d\n",
+	 //sim->proc_list[1].t_list[0].cpu_bursts, sim->proc_list[1].t_list[0].arrive);
 	
 	
 	//Start making queue
@@ -165,7 +165,6 @@ int main (int argc, char * argv[]) {
 	//Need a total time to keep track of everything
 	int sim_time = 0;
 	printf("numbursts in process 2 thread 1 = %d\n", sim->proc_list[1].t_list[0].cpu_bursts);
-	int dowhile = 0;
 	printf("The cpu in P1 T2 B2 = %d\n\n\n", sim->proc_list[0].t_list[1].b_list[1].cpu_left);
 
 
@@ -174,12 +173,17 @@ int main (int argc, char * argv[]) {
 
 		//This is the start of FCFS
 		if (flags[2] != 1) {//1 being flag -r was present and a time quantum given for rr
-			printf("FCFS\n");
+			//printf("FCFS\n");
 			
 			//Threads switch between cpu time and IO
 			thread = PopMin(pq);
 
-			printf("This thread is P%d B%d with arrival thread arr time %d\n", thread.parent_process, thread.cur_b, thread.arrive);
+			//printf("This thread is P%d B%d with arrival thread arr time %d\n", thread.parent_process, thread.cur_b, thread.arrive);
+			if (thread.arrive == thread.init_arrive && flags[1] == 1) {
+				printf("At time %d: Thread %d of Process %d moves from new to ready\n", thread.init_arrive, thread.thread_num + 1, thread.parent_process + 1);
+			} else if (thread.arrive != thread.init_arrive && flags[1] == 1) {//Blocked to ready
+				printf("At time %d: Thread %d of Process %d moves from blocked to ready\n", thread.arrive, thread.thread_num + 1, thread.parent_process + 1);
+			}
 
 			if (prev_proc_num != -1) {//Check to make sure its not the first thread when theres no prev proc
 				if (thread.parent_process == prev_proc_num) {//Same process switch time
@@ -189,13 +193,17 @@ int main (int argc, char * argv[]) {
 				}
 			}
 
-			printf("Enters cpu at %d\n", sim_time);
+			//printf("Enters cpu at %d\n", sim_time);
+			if (flags[1] == 1) {
+				printf("At time %d: Thread %d of Process %d moves from ready to running\n", sim_time, thread.thread_num + 1, thread.parent_process + 1);				
+			}
 			//Set when to enter the ready q again
 			thread.arrive = thread.b_list[thread.cur_b].cpu + thread.b_list[thread.cur_b].io + sim_time;
 
-			//In FCFS do its CPU then 'arrive' after next IO
-			printf("Next thread arrive time with new burst %d\n", thread.arrive);
 			next_e = thread.b_list[thread.cur_b].cpu;
+			if (flags[1] == 1) {//Verbose mode running to blocked
+					printf("At time %d: Thread %d of Process %d moves from running to blocked\n", sim_time + next_e, thread.thread_num + 1, thread.parent_process + 1);
+			}
 			arr_time = next_e;
 			sim_time += arr_time;
 			prev_proc_num = thread.parent_process;
@@ -209,21 +217,33 @@ int main (int argc, char * argv[]) {
 				// not go back into the queue
 				threadTerminated++;
 				sim->proc_list[thread.parent_process].t_list[thread.thread_num].time_finished = sim_time;
-
+				thread.time_finished = sim_time;
 				//Count up threads terminated for the process and store time once both are done
 				sim->proc_list[thread.parent_process].threads_terminated++;
 				if (sim->proc_list[thread.parent_process].threads_terminated == sim->proc_list[thread.parent_process].tnum) {
-					printf("This process is complete at time %d\n", sim_time);
+					//printf("This process is complete at time %d\n", sim_time);
 					sim->proc_list[thread.parent_process].time_finished = sim_time;
 				}
-				printf("Thread termination time %d\n", sim_time);
+				if (flags[1] == 1) {//Verbose mode
+
+					thread.cpu_tot = sim->proc_list[thread.parent_process].t_list[thread.thread_num].cpu_tot;
+					for (int i = 0; i < sim->proc_list[thread.parent_process].t_list[thread.thread_num].cpu_bursts - 1; i++) {
+						thread.io_tot += sim->proc_list[thread.parent_process].t_list[thread.thread_num].b_list[i].io;
+					}
+					printf("At time %d: Thread %d of Process %d moves from running to terminated\n", sim_time, thread.thread_num + 1, thread.parent_process + 1);
+					//Give summary info
+					printf("Arrival time: %d\n", thread.init_arrive);
+					printf("Service time: %d units, IO time: %d units, turnaround time: %d units, finish time: %d\n"
+					, thread.cpu_tot, thread.io_tot, (thread.time_finished - thread.init_arrive), thread.time_finished);
+					printf("\n");
+				}
 			} else {//Theres still some cpu bursts left and it needs to go back in queue
 				insert(pq, thread);	
 			}
 			//Thread goes out for io after cpu and when back needs new burst
 			
 			
-			printf("New event time after cpu burst %d\n", sim_time);
+			//printf("New event time after cpu burst %d\n", sim_time);
 			//if statement for at event time if there are no threads that have arrived
 			//go to next thread event time
 			num_of_bursts++;
@@ -232,17 +252,21 @@ int main (int argc, char * argv[]) {
 		//This is the start of round robin
 
 		} else if (flags[2] == 1) {//Flag -r and quantum are given
-			printf("RR\n");
+			//printf("RR\n");
 
 			//Threads switch between cpu time and IO
 			thread = PopMin(pq);
-
-			printf("This thread is P%d T%d B%d with arrival time %d\n", thread.parent_process+1, thread.thread_num+1, thread.cur_b+1, thread.arrive);
+			if (thread.arrive == thread.init_arrive && flags[1] == 1) {
+				printf("At time %d: Thread %d of Process %d moves from new to ready\n", thread.init_arrive, thread.thread_num + 1, thread.parent_process + 1);
+			} else if (thread.arrive != thread.init_arrive && flags[1] == 1) {//Blocked to ready
+				printf("At time %d: Thread %d of Process %d moves from blocked to ready\n", thread.arrive, thread.thread_num + 1, thread.parent_process + 1);
+			}
+			//printf("This thread is P%d T%d B%d with arrival time %d\n", thread.parent_process+1, thread.thread_num+1, thread.cur_b+1, thread.arrive);
 			
 			if (prev_proc_num != -1) {//Check to make sure its not the first thread when theres no prev proc
 				if (thread.parent_process == prev_proc_num && thread.thread_num == prev_t && thread.cur_b == prev_b) {
 					//This is the same burst on the same thread
-					printf("This is the same burst\n");
+					//printf("This is the same burst\n");
 				} else {
 					if (thread.parent_process == prev_proc_num) {//Same process switch time
 						sim_time += sim->same_switch;
@@ -259,17 +283,23 @@ int main (int argc, char * argv[]) {
 			prev_t = thread.thread_num;
 			prev_b = thread.cur_b;
 
-			printf("Enters cpu at %d\n", sim_time);
+			//printf("Enters cpu at %d\n", sim_time);
+			if (flags[1] == 1) {
+				printf("At time %d: Thread %d of Process %d moves from ready to running\n", sim_time, thread.thread_num + 1, thread.parent_process + 1);
+			}
 
 
 			//If not done current cpu service stay and decrement time left
 			if (thread.b_list[thread.cur_b].cpu_left > quantum) {//Subtract quanta time from service time 
 
+				if (flags[1] == 1) {//Verbose mode running to blocked
+					printf("At time %d: Thread %d of Process %d moves from running to blocked\n", sim_time + quantum, thread.thread_num + 1, thread.parent_process + 1);
+				}
 				thread.arrive = quantum + thread.b_list[thread.cur_b].io + sim_time;
-				printf("re-entry = sim_time %d + quantum %d + io %d\n", sim_time, quantum, thread.b_list[thread.cur_b].io);
+				//printf("re-entry = sim_time %d + quantum %d + io %d\n", sim_time, quantum, thread.b_list[thread.cur_b].io);
 				sim->proc_list[thread.parent_process].t_list[thread.thread_num].b_list[thread.cur_b].cpu_left -= quantum;
 				//thread.b_list[thread.cur_b].cpu_left -= quantum;
-				printf("This burst still has service time left %d\n", thread.b_list[thread.cur_b].cpu_left);
+				//printf("This burst still has service time left %d\n", thread.b_list[thread.cur_b].cpu_left);
 				next_e = quantum;//Supposed to pop ahead proper amount to next event
 				// if(thread.b_list[thread.cur_b].cpu_left <= 0) {//Probably dont need but keep for now
 				// 	thread.cur_b++;
@@ -277,17 +307,19 @@ int main (int argc, char * argv[]) {
 			//Else done current burst cpu service go to next in thread
 			} else if (thread.b_list[thread.cur_b].cpu_left <= quantum) {//Only go service time before io
 				
-				//This thread arrive time is messed up
+				if (flags[1] == 1) {//Verbose mode running to blocked
+					printf("At time %d: Thread %d of Process %d moves from running to blocked\n", sim_time + thread.b_list[thread.cur_b].cpu_left, thread.thread_num + 1, thread.parent_process + 1);
+				}
 				thread.arrive = thread.b_list[thread.cur_b].cpu_left + thread.b_list[thread.cur_b].io + sim_time;
 				int cpu_l = sim->proc_list[thread.parent_process].t_list[thread.thread_num].b_list[thread.cur_b].cpu_left;
-				printf("re-entry = sim_time %d + cpu %d + io %d\n", sim_time, cpu_l, thread.b_list[thread.cur_b].io);
+				//printf("re-entry = sim_time %d + cpu %d + io %d\n", sim_time, cpu_l, thread.b_list[thread.cur_b].io);
 				sim->proc_list[thread.parent_process].t_list[thread.thread_num].cpu_tot += thread.b_list[thread.cur_b].cpu;
 				//Below goes to the next burst not the current one
 				next_e = thread.b_list[thread.cur_b].cpu_left;//Check next_e's they may be wrong
 				thread.cur_b++;
 				//This line below may be the problem causer
 				// thread.b_list[thread.cur_b].cpu_left = 0;
-				printf("On burst %d of bursts %d\n", thread.cur_b, thread.cpu_bursts);
+				//printf("On burst %d of bursts %d\n", thread.cur_b, thread.cpu_bursts);
 				if (thread.cur_b == thread.cpu_bursts) {
 					printf("Thread is finished\n");
 				} else {
@@ -304,39 +336,45 @@ int main (int argc, char * argv[]) {
 				//Had to -- cur_b so the array was accessed properly
 				thread.cur_b--;
 
-				printf("cpu time left %d\n", thread.b_list[thread.cur_b].cpu_left);
+				//printf("cpu time left %d\n", thread.b_list[thread.cur_b].cpu_left);
 				if (thread.b_list[thread.cur_b].cpu_left <= quantum) {//There is no cpu service time left
 					//terminate this thread
 					threadTerminated++;
 					sim->proc_list[thread.parent_process].t_list[thread.thread_num].time_finished = sim_time;
-
+					thread.time_finished = sim_time;
 					//Count up threads terminated for the process and store time once both are done
 					sim->proc_list[thread.parent_process].threads_terminated++;
 					if (sim->proc_list[thread.parent_process].threads_terminated == sim->proc_list[thread.parent_process].tnum) {
 						printf("This process is complete at time %d\n", sim_time);
 						sim->proc_list[thread.parent_process].time_finished = sim_time;
 					}
-					printf("Thread termination time %d\n", sim_time);
+					printf("Thread termination time %d\n\n", sim_time);
+					if (flags[1] == 1) {//Verbose mode
+
+						thread.cpu_tot = sim->proc_list[thread.parent_process].t_list[thread.thread_num].cpu_tot;
+						for (int i = 0; i < sim->proc_list[thread.parent_process].t_list[thread.thread_num].cpu_bursts - 1; i++) {
+							thread.io_tot += sim->proc_list[thread.parent_process].t_list[thread.thread_num].b_list[i].io;
+						}
+						printf("At time %d: Thread %d of Process %d moves from running to terminated\n", sim_time, thread.thread_num + 1, thread.parent_process + 1);
+						//Give summary info
+						printf("Arrival time: %d\n", thread.init_arrive);
+						printf("Service time: %d units, IO time: %d units, turnaround time: %d units, finish time: %d\n"
+						, thread.cpu_tot, thread.io_tot, (thread.time_finished - thread.init_arrive), thread.time_finished);
+						printf("\n");
+					}	
 				} else {//This is the last burst but there is some cpu service time left
-					printf("Thread re-enters the ready queue at time %d\n", thread.arrive);
+					//printf("Thread re-enters the ready queue at time %d\n", thread.arrive);
 					insert(pq, thread);		
 				}
 			} else {//Theres still some cpu bursts left and it needs to go back in queue
-				printf("Thread re-enters the ready queue at time %d\n", thread.arrive);
+				//printf("Thread re-enters the ready queue at time %d\n", thread.arrive);
 				insert(pq, thread);	
 			}
 			//go to next thread event time
 			num_of_bursts++;
 		} 
-
-
-		printf("\n");
-		printf("\n\n");
-		dowhile++;
 	}
 
-
-	//FIXME: Add this code back in when done with RR
 	float avg_turn_time = 0;
 	int cpu_ut = 0;
 	for (int i = 0; i < sim->process; i++) {
