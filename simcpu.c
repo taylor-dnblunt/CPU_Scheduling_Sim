@@ -356,7 +356,8 @@ int main (int argc, char * argv[]) {
 			}
 		}
 	}
-	
+	free(pq->arr);
+	free(pq);
 	free(line);
 	free(backupLine);
 	free_mem(sim);
