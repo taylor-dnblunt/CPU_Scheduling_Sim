@@ -16,6 +16,7 @@ int flag_checker(int argc, char * argv[], int * flag_arr) {
 		if (strcmp("-r", argv[i]) == 0) {
 			if (argv[i + 1] != NULL) {//Error checking if there is no quantum supplied
 				flag_arr[2] = 1;
+				printf("Round Robin Scheduling (quantum = %d)\n", atoi(argv[i+1]));
 				return atoi(argv[i+1]);
 			} else {
 				//Return error code for no time quantum given
