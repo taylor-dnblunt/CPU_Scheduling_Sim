@@ -1,5 +1,5 @@
 # Taylor Blunt 0793684
-# Operating Systems Assignment 2
+# CPU Scheduling Simulator
 
 simcpu.c contains the main function along with the input parser, FCFS while loop, RR while loop,
 and deals with printing the relevant flag prints.
